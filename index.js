@@ -16,7 +16,7 @@ const PersonSchema = new mongoose.Schema({
     name: String,
     age: Number
 });
-mongoose.connect(process.env.MONGODB_URI+process.env.MONGO_DB)
+mongoose.connect(process.env.MONGODB_URI)
     .then((result) => {
         console.log('connected to Mongodb: ');
         PersonModel = mongoose.model('person', PersonSchema, 'persons');
