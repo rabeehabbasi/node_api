@@ -16,7 +16,7 @@ const PersonSchema = new mongoose.Schema({
     name: String,
     age: Number
 });
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI, {dbName: 'persons'})
     .then((result) => {
         console.log('connected to Mongodb: ');
         PersonModel = mongoose.model('person', PersonSchema, 'persons');
@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
             res.json(data);
         })
         .catch(err => {
-            res.send(err);
+            res.json(err);
         });
 })
 
@@ -45,11 +45,11 @@ app.get('/persons/:id', (req, res) => {
             res.json(data);
         })
         .catch(err => {
-            res.send(err);
+            res.json(err);
         });
 })
 
-app.post('/persons', (req, res) => {
+app.post('/persons/update', (req, res) => {
     PersonModel.findOne({id: req.body.id})
         .then((data) => {
             data.name = req.body.name;
@@ -58,20 +58,17 @@ app.post('/persons', (req, res) => {
             res.json(data);
         })
         .catch(err => {
-            res.send(err);
+            res.json(err);
         });
 })
 
-app.post('/persons/update', (req, res) => {
-    const person_body = req.body;
-    PersonModel.findOne({id: person_body.id})
+app.post('/persons', (req, res) => {
+    const person = new PersonModel(req.body);
+    person.save()
         .then((data) => {
-            data.name = person_body.name;
-            data.age = person_body.age;
-            data.save().then(doc => console.log(doc));
-            res.send(data);
+            res.json(data);
         })
         .catch(err => {
-            res.send(err);
+            res.json(err);
         });
 })
