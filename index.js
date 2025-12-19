@@ -33,21 +33,29 @@ app.get('/', (req, res) => {
         .then((data) => {
             res.json(data);
         })
+        .catch(err => {
+            res.send(err);
+        });
 })
 
 app.get('/persons/:id', (req, res) => {
     const id = req.params.id;
-    PersonModel.find({"id": id})
+    PersonModel.find({"id": id}).lean()
         .then((data) => {
             res.json(data);
         })
+        .catch(err => {
+            res.send(err);
+        });
 })
 
 app.post('/persons', (req, res) => {
-    const person = new PersonModel(req.body);
-    person.save()
+    PersonModel.findOne({id: req.body.id})
         .then((data) => {
-            res.send(data);
+            data.name = req.body.name;
+            data.age = req.body.age;
+            data.save();
+            res.json(data);
         })
         .catch(err => {
             res.send(err);
